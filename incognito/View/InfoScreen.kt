@@ -1,3 +1,5 @@
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.background
@@ -49,15 +51,23 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.Surface
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
+import com.example.incognito.ViewModel.MainViewModel
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun InfoScreen(navController: NavController, onNavigateToGame: (Int) -> Unit) {
+fun InfoScreen(navController: NavController, onNavigateToGame: (Int) -> Unit,
+               viewModel : MainViewModel
+) {
+    val isDark by viewModel.isDarkMode.collectAsState()
     var playerCount by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -76,100 +86,112 @@ fun InfoScreen(navController: NavController, onNavigateToGame: (Int) -> Unit) {
         }
     }
 
-    Column(
+    Surface(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .background(MaterialTheme.colorScheme.background)
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }) {
-                keyboardController?.hide()
-            }.imePadding(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .fillMaxSize(),
+        color = Color.Black
     ) {
-        TypewriterText(
-            text = "Welcome to the Game!",
-            typingSpeed = 85, // faster typing
-            style = TextStyle(fontSize = 30.sp,
-                fontWeight = FontWeight.Bold)
-        )
-        OutlinedTextField(
-            value = playerCount,
-            onValueChange = { newText ->
-                /*Text(
-                    text = "Welcome to the Game!",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )*/
-                if (newText.all { it.isDigit() } || newText.isEmpty()) {
-                    playerCount = newText
-                    isError = false
-                } else {
-                    isError = true
-                }
-            },
-            shape = RoundedCornerShape(16.dp),
-            label = { Text("Number of Players") },
-            placeholder = { Text("Enter a number...") },
-            isError = isError,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done  // Set the keyboard action to Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = { startGame() }  // Execute the startGame function when Done/Enter is pressed
-            ),
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-                .background(MaterialTheme.colorScheme.surface).imePadding()
-        )
-
-        if (isError) {
-            Text(
-                text = "Please enter a valid number between 4 and 19",
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-        }
-
-        Button(
-            onClick = { startGame() },  // Use the same startGame function for consistency
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 24.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            ),
-            shape = RoundedCornerShape(12.dp)
+                .fillMaxSize()
+                .padding(16.dp)
+                .background(Color.Black/*MaterialTheme.colorScheme.background*/)
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }) {
+                    keyboardController?.hide()
+                }.imePadding(),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                "Start Game",
-                color = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
-        }
 
-        // Modern Rules button with text instead of icon
-        Button(
-            onClick = { rulesDialog = true },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer
-            ),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text(
-                "Rules",
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                modifier = Modifier.padding(vertical = 8.dp)
+
+
+            TypewriterText(
+                text = "Welcome to the Game!",
+                typingSpeed = 85, // faster typing
+                style = TextStyle(fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold)
             )
+            OutlinedTextField(
+                value = playerCount,
+                onValueChange = { newText ->
+                    /*Text(
+                        text = "Welcome to the Game!",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )*/
+                    if (newText.all { it.isDigit() } || newText.isEmpty()) {
+                        playerCount = newText
+                        isError = false
+                    } else {
+                        isError = true
+                    }
+                },
+                shape = RoundedCornerShape(16.dp),
+                label = { Text("Number of Players") },
+                placeholder = { Text("Enter a number...") },
+                isError = isError,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done  // Set the keyboard action to Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { startGame() }  // Execute the startGame function when Done/Enter is pressed
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                    .background(Color.Black/*MaterialTheme.colorScheme.surface*/).imePadding()
+            )
+
+            if (isError) {
+                Text(
+                    text = "Please enter a valid number between 4 and 19",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(180.dp))
+
+            Button(
+                onClick = { startGame() },  // Use the same startGame function for consistency
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp, bottom = 24.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    "Start Game",
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
+
+
+            // Modern Rules button with text instead of icon
+            Button(
+                onClick = { rulesDialog = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    "Rules",
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
         }
     }
 
