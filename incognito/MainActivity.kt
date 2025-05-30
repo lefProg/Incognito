@@ -25,6 +25,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.incognito.ViewModel.MainViewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 
 
 class MainActivity : ComponentActivity() {
@@ -34,7 +36,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val viewModel = viewModel<MainViewModel>()
-            IncognitoTheme(darkTheme = true) {
+            val isDarkMode by viewModel.isDarkMode.collectAsState()
+
+            IncognitoTheme(darkTheme = isDarkMode) {
                 Surface(
                     modifier = Modifier.fillMaxSize().systemBarsPadding()
                 ) {
